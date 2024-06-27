@@ -3,7 +3,7 @@ import {defineString} from "firebase-functions/params";
 
 const apiKey = defineString("APIKEY");
 
-export const verifyWord = onRequest(async (req, res)=> {
+export const verifyWord = onRequest(async (req, res) => {
   try {
     // // Set the allowed origin
     const allowedOrigin = "https://wordle-prac.vercel.app";
@@ -25,7 +25,15 @@ export const verifyWord = onRequest(async (req, res)=> {
       res.status(404).send("Word not found");
     } else {
       const json = await response.json();
-      res.status(200).send(json);
+      // check if word is found
+      if (
+        json.length > 0 &&
+        Object.prototype.hasOwnProperty.call(json[0], "id")
+      ) {
+        res.status(200).send("ok");
+      } else {
+        res.status(404).send("Word not found");
+      }
     }
   } catch (error) {
     res.status(500).send("Error fetching data");
